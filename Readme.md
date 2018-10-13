@@ -1,5 +1,5 @@
-# Lasertag #
-This is my vision of what Lasertag can and should be. By adding Bluetooth to the tagger, a companion phone app can provide access to a central server and also augment the tagger's information, such as supplying location data. This can allow more game modes than would be possible with just a tagger setup. 
+# ESP32 Lasertag #
+This is my vision of what Lasertag can and should be. By adding Bluetooth to the tagger, a companion phone app can provide access to a central server and augment the tagger's information, such as supplying location data. This can allow more game modes than would be possible with just a tagger setup. 
 
 ## Simple Features ##
 Two game modes:

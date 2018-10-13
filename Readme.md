@@ -18,5 +18,9 @@ Common elements to both game modes:
 ## TODO ##
 Add more game modes and work on companion app.
 
+## Dependencies ##
+This project is built using PlatformIO. There are a few libraries that this project depends on that will need to be installed:
+ * ESP8266-SSD1306 by Fabrice Weinberg
+
 ## Known Issues ##
 Starting the LCD Task without an I2C Slave device connected causes issues with all the tasks, causing the microcontroller to hang. The current workaround consists of a `#define` value in config.h that should only be uncommented when an LCD is connected.

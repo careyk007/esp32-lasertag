@@ -5,6 +5,7 @@
 
 typedef enum MESSAGE_FROM {
     RECEIVE_SHOT,
+    RECEIVE_SHOT_RESPONSE,
     SHOOT,
     SHOOT_RESPONSE,
     RELOAD,
@@ -116,6 +117,47 @@ public:
 private:
     const message_from_t this_type = RECEIVE_SHOT;
 
+};
+
+/**
+ * \class ReceiveShotResponseMessage
+ * \brief Message originating from the Game Engine Task to communicate with the
+ *          Shot Received Task.
+ * 
+ * This message contains the information needed by the Game Engine to respond
+ * appropriately to an incoming shot packet.
+ */
+class ReceiveShotResponseMessage : public GameMessage {
+
+public:
+    /**
+     * @brief Default Constructor.
+     */
+    ReceiveShotResponseMessage(void) {}
+
+    /**
+     * @brief Default Destructor.
+     */
+    ~ReceiveShotResponseMessage(void) {}
+
+    /**
+     * \brief Function to determine the true type of the message.
+     * 
+     * This is important to allow handlers to determine the origin of the
+     * message and respond accordingly.
+     * 
+     *  \return The type of message.
+     */
+    message_from_t getType(void) { return (this_type); }
+
+    uint16_t player_health;     /*!< This player's remaining health */
+    uint16_t player_shield;     /*!< This player's remaining shield */
+    uint16_t player_number;     /*!< This player's number */
+    uint16_t player_team;       /*!< This player's team */
+    uint32_t timestamp;         /*!< Message timestamp */
+
+private:
+    const message_from_t this_type = RECEIVE_SHOT_RESPONSE;
 };
 
 /**

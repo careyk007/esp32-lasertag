@@ -51,6 +51,9 @@ void setup() {
     reload_task_queue =
         xQueueCreate(reload_task_queue_size, sizeof(GameMessage*));
 
+    shot_receive_task_queue = 
+        xQueueCreate(shot_receive_task_queue_size, sizeof (GameMessage*));
+
 #if defined(ENABLE_LCD_TASK)
     lcd_task_queue = 
         xQueueCreate(lcd_task_queue_size, sizeof(GameMessage*));
@@ -64,6 +67,7 @@ void setup() {
         || (game_engine_queue == NULL)
         || (shoot_task_queue == NULL)
         || (reload_task_queue == NULL)
+        || (shot_receive_task_queue == NULL)
 #if defined(ENABLE_LCD_TASK)
         || (lcd_task_queue == NULL)
 #endif

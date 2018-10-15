@@ -36,8 +36,9 @@ public:
      *  - Player is permanently dead once health reaches zero
      * 
      *  \param packet The packet containing the shot information.
+     *  \return A packet to send to the Shot Receive Task.
      */
-    virtual void ShotPacket(GameMessage *packet);
+    virtual GameMessage *ShotPacket(GameMessage *packet);
 
     /**
      * \brief Handler for shoot request packets.

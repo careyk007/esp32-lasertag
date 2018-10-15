@@ -26,8 +26,10 @@ void Game::checkPlayerStatus(void) {
     }
 }
 
-void Game::ShotPacket(GameMessage *packet) {
+GameMessage *Game::ShotPacket(GameMessage *packet) {
     ReceiveShotMessage *msg = (ReceiveShotMessage *)packet;
+    ReceiveShotResponseMessage *response = new ReceiveShotResponseMessage();
+
     this->player->takeDamage(msg->damage);
     
     Serial.print("\t\tPlayer Shield:\t");
@@ -35,14 +37,22 @@ void Game::ShotPacket(GameMessage *packet) {
     Serial.print("\t\tPlayer Health:\t");
     Serial.println(this->player->getHealth());
 
+    response->player_health = this->player->getHealth();
+    response->player_shield = this->player->getShield();
+    response->player_number = this->player->getPlayerNumber();
+    response->player_team   = this->player->getTeamNumber();
+
     checkPlayerStatus();
+
+    response->timestamp = xTaskGetTickCount();
+
+    return (response);
 }
 
 GameMessage *Game::ShootPacket(GameMessage *packet) {
     ShootResponseMessage *response = new ShootResponseMessage();
     if (player->canPlay()) {
         if (gun->canShoot()) {
-            gun->shoot();
             response->shot_valid = SHOOT_RESPONSE_OK;
         } else {
             response->shot_valid = SHOOT_RESPONSE_NO_AMMO;

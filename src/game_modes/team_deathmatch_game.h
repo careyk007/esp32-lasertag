@@ -23,8 +23,11 @@ public:
      * 
      * With team death match, players receive half damage from other team
      * members and quarter damage from themselves.
+     * 
+     *  \param packet The packet containing the shot information.
+     *  \return A packet to send to the Shot Receive Task.
      */
-    virtual void ShotPacket(GameMessage *packet);
+    virtual GameMessage *ShotPacket(GameMessage *packet);
 
     /*
      * Don't need to override any other default game modes.

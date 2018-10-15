@@ -7,7 +7,7 @@ BluetoothHandler *ble;
 
 /* Queue for communication with Bluetooth Task */
 QueueHandle_t bluetooth_task_queue;
-int bluetooth_task_queue_size = 2;
+int bluetooth_task_queue_size = 10;
 
 void bluetoothTask(void *parameter)
 {

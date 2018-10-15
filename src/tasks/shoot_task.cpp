@@ -1,6 +1,9 @@
 #include "shoot_task.h"
 
 #include "../game_message.h"
+
+#include "bluetooth_task.h"
+
 #include "freertos/FreeRTOS.h"
 #include "game_engine_task.h"
 
@@ -37,30 +40,50 @@ void shootTask(void *parameter)
             msg->player_number = player->getPlayerNumber();
             msg->team_number = player->getTeamNumber();
             msg->timestamp = xTaskGetTickCount();
+            
+            BluetoothMessage *btmsg = new BluetoothMessage();
 
             xQueueSend(game_engine_queue, &msg, pdMS_TO_TICKS(10));
 
             /* Wait for game engine response and take appropriate action */
-            xQueueReceive(shoot_task_queue, &resp, pdMS_TO_TICKS(1000));
-            switch (resp->shot_valid) {
-            case SHOOT_RESPONSE_OK:
-                Serial.println("Shot was valid");
-                vTaskDelay(pdMS_TO_TICKS(gun->getFireRate()));
-                break;
-            case SHOOT_RESPONSE_DEAD:
-                Serial.println("Shot not valid: Player Dead");
-                vTaskDelay(pdMS_TO_TICKS(1000));
-                break;
-            case SHOOT_RESPONSE_NO_AMMO:
-                Serial.println("Shot not valid: No Ammo");
-                vTaskDelay(pdMS_TO_TICKS(500));
-                break;
-            default:
-                break;
-            };
+            if (xQueueReceive(shoot_task_queue, &resp, pdMS_TO_TICKS(1000)) == pdTRUE)
+            {
+                switch (resp->shot_valid) {
+                case SHOOT_RESPONSE_OK:
+                    gun->shoot();
+                    Serial.println("Shot was valid");
 
-            /* Make sure to free the message from the game engine */
-            delete resp;
+                    /* Need to let Bluetooth device know that a shot was sent */
+                    btmsg->service = GUN_SERVICE;
+                    btmsg->characteristic = AMMO;
+                    btmsg->value = static_cast<uint32_t>(gun->getAmmo());
+                    xQueueSend(bluetooth_task_queue, &btmsg, pdMS_TO_TICKS(10));
+
+                    vTaskDelay(pdMS_TO_TICKS(gun->getFireRate()));
+                    break;
+                case SHOOT_RESPONSE_DEAD:
+                    Serial.println("Shot not valid: Player Dead");
+                    delete btmsg;
+                    vTaskDelay(pdMS_TO_TICKS(1000));
+                    break;
+                case SHOOT_RESPONSE_NO_AMMO:
+                    Serial.println("Shot not valid: No Ammo");
+                    delete btmsg;
+                    vTaskDelay(pdMS_TO_TICKS(500));
+                    break;
+                default:
+                    delete btmsg;
+                    break;
+                };
+
+                /* Make sure to free the message from the game engine */
+                delete resp;
+            }
+            else
+            {
+                delete btmsg;
+                delete msg;
+            }
 
             /* Update trigger status */
             xQueuePeek(trigger_state_queue, &button, 0);

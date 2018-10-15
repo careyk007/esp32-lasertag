@@ -1,9 +1,16 @@
 #ifndef _SHOT_RECEIVE_TASK_H_
 #define _SHOT_RECEIVE_TASK_H_
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
+
 #include "../ir_handler.h"
 
 extern IRHandler *ir_handler;
+
+/* Queue for communicating with Shot Receive Task */
+extern QueueHandle_t shot_receive_task_queue;
+extern int shot_receive_task_queue_size;
 
 /**
  * \brief Shot Receive Task

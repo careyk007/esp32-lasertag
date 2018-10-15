@@ -40,7 +40,8 @@ void gameEngineTask(void *parameter)
             switch (packet->getType())
             {
             case RECEIVE_SHOT:
-                game_engine->ShotPacket(packet);
+                response = game_engine->ShotPacket(packet);
+                xQueueSend(shot_receive_task_queue, &response, pdMS_TO_TICKS(10));
                 break;
             case SHOOT:
                 response = game_engine->ShootPacket(packet);

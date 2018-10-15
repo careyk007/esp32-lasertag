@@ -12,8 +12,9 @@ TeamDeathmatchGame::~TeamDeathmatchGame(void) {
 
 }
 
-void TeamDeathmatchGame::ShotPacket(GameMessage *packet) {
+GameMessage *TeamDeathmatchGame::ShotPacket(GameMessage *packet) {
     ReceiveShotMessage *msg = (ReceiveShotMessage *)packet;
+    ReceiveShotResponseMessage *response = new ReceiveShotResponseMessage();
 
     uint8_t damage_divisor = 1;
 
@@ -31,5 +32,14 @@ void TeamDeathmatchGame::ShotPacket(GameMessage *packet) {
     Serial.print("\t\tPlayer Health:\t");
     Serial.println(this->player->getHealth());
 
+    response->player_health = this->player->getHealth();
+    response->player_shield = this->player->getShield();
+    response->player_number = this->player->getPlayerNumber();
+    response->player_team   = this->player->getTeamNumber();
+
     checkPlayerStatus();
+
+    response->timestamp = xTaskGetTickCount();
+
+    return (response);
 }

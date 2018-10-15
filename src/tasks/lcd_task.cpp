@@ -1,3 +1,4 @@
+#ifdef ENABLE_LCD_TASK
 #include "lcd_task.h"
 
 #include "game_message.h"
@@ -23,3 +24,4 @@ void LCDTask(void *parameter)
 
     vTaskDelete(NULL);
 }
+#endif // ENABLE_LCD_TASK

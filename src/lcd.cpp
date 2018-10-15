@@ -1,3 +1,4 @@
+#ifdef ENABLE_LCD_TASK
 #include "lcd.h"
 #include "SSD1306.h"
 #include "pins.h"
@@ -35,3 +36,4 @@ void LCD::runTest(void) {
 
     lcd.display();
 }
+#endif // ENABLE_LCD_TASK

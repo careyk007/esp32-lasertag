@@ -23,15 +23,6 @@ volatile uint8_t reload_pin_status  = 0;
 
 void IRAM_ATTR gpio_isr_handler(void* arg) 
 {
-  // Not necessarily the best way of doing this
-  // Should have trigger press release mutex
-  // and trigger release consume mutex
-  // Infrared_nec.c would then consume the mutex before
-  // shooting and release it immediately after firing
-  // That way, whenever the user releases the trigger,
-  // Infrared_nec.c can't consume the mutex and must
-  // wait until the user presses the trigger again
-
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   BaseType_t result;
   boolean button_state;
@@ -41,14 +32,7 @@ void IRAM_ATTR gpio_isr_handler(void* arg)
   {
     trigger_pin_status = gpio_get_level((gpio_num_t)pin_number);
 
-    if (trigger_pin_status) 
-    {
-      button_state = true;
-    } 
-    else 
-    {
-      button_state = false;
-    }
+    button_state = trigger_pin_status;
 
     result = xQueueOverwriteFromISR(trigger_state_queue, &button_state,
                                     &xHigherPriorityTaskWoken);
@@ -61,14 +45,7 @@ void IRAM_ATTR gpio_isr_handler(void* arg)
   {
     reload_pin_status = gpio_get_level((gpio_num_t)pin_number);
 
-    if (reload_pin_status)
-    {
-      button_state = true;
-    }
-    else
-    {
-      button_state = false;
-    }
+    button_state = reload_pin_status;
 
     result = xQueueOverwriteFromISR(reload_state_queue, &button_state,
                                     &xHigherPriorityTaskWoken);
